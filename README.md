@@ -2,11 +2,11 @@
 
 trained text-generating neural network that generates episodes of [Planet Money](https://www.npr.org/sections/money/)
 
-```txt
-KESTENBAUM: That is a count to Norway. Thee resorves of the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the wort of the oil curse. So the were on the oil curse. The problem is the resorves in the
+Example:
 
-SMITH: Yee. And it's to the recesterent of the recountry that was a lot of the oil curse. The problem is the oil curse. The problem with the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil cur
-```
+* **KESTENBAUM**: That is a count to Norway. Thee resorves of the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the wort of the oil curse. So the were on the oil curse. The problem is the resorves in the
+
+* **SMITH**: Yee. And it's to the recesterent of the recountry that was a lot of the oil curse. The problem is the oil curse. The problem with the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil cur
 
 ## CloudFormation
 
