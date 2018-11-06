@@ -2,6 +2,12 @@
 
 trained text-generating neural network that generates episodes of [Planet Money](https://www.npr.org/sections/money/)
 
+```txt
+KESTENBAUM: That is a count to Norway. Thee resorves of the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the wort of the oil curse. So the were on the oil curse. The problem is the resorves in the
+
+SMITH: Yee. And it's to the recesterent of the recountry that was a lot of the oil curse. The problem is the oil curse. The problem with the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil curse. The problem is the oil cur
+```
+
 ## CloudFormation
 
 ### SageMaker
@@ -57,3 +63,4 @@ Upload the contents of `notebooks/` to your SageMaker root directory.
 
 * `scrape.ipynb` - scrape the episode transcripts
 * `basic-analysis.ipynb` - train your own text-generating neural network (uses [textgenrnn](https://github.com/minimaxir/textgenrnn))
+* `basic-analysis-conversation.ipynb` - train and output a conversation log between reporters
