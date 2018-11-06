@@ -1,0 +1,22 @@
+[
+    {
+        "ParameterValue": "ml.t2.medium",
+        "ParameterKey": "NotebookInstanceType"
+    },
+    {
+        "ParameterValue": "sg-13371337",
+        "ParameterKey": "SecurityGroupId"
+    },
+    {
+        "ParameterValue": "subnet-1234123",
+        "ParameterKey": "SubnetId"
+    },
+    {
+        "ParameterValue": "planet-money-analysis",
+        "ParameterKey": "NotebookInstanceName"
+    },
+    {
+        "ParameterValue": "planey-money-generator",
+        "ParameterKey": "SageMakerS3Bucket"
+    }
+]
