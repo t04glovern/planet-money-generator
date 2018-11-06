@@ -1,0 +1,8 @@
+{
+  "name": "polly-s3",
+  "version": "1.0.0",
+  "description": "Lambda function to convert text to speech with Polly",
+  "main": "index.js",
+  "author": "Elisebot",
+  "license": "MIT"
+}
