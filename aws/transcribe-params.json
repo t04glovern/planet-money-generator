@@ -4,6 +4,6 @@
     "MediaSampleRateHertz": 44100,
     "MediaFormat": "mp3",
     "Media": {
-        "MediaFileUri": "https://s3.amazonaws.com/planey-money-generator/episodes/Episode-873-The-Seattle-Experiment.mp3"
+        "MediaFileUri": "https://s3.amazonaws.com/planet-money-generator/episodes/Episode-873-The-Seattle-Experiment.mp3"
     }
 }
