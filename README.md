@@ -155,3 +155,9 @@ Download the results of the transcription using the `TranscriptFileUri` field in
     }
 }
 ```
+
+## Execution on Local Hardware
+
+We weren't able to enable accelerated compute on our account to use `ml.p2.xlarge` via SageMaker, so we ran our training on our local systems GPUs
+
+## TBC Stephen
