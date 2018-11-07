@@ -3,6 +3,7 @@ from json import loads
 from sys import argv
 
 file_path = argv[1]
+num_sentence = argv[2]
 
 
 def convertTranscript(file_path):
@@ -20,9 +21,6 @@ def convertTranscript(file_path):
     return newfilename
 
 
-
-
-
 if file_path.split(".")[-1]=='json':
     file_path = convertTranscript(file_path)
 
@@ -34,7 +32,7 @@ textgen.train_from_file(file_path, new_model=True, num_epochs=25, gen_epochs=100
                         max_length=10)
 
 f = open("FinalScript.txt", "w")
-for _ in range(0, 10):
+for _ in range(0, num_sentence):
     k = textgen.generate(n=1, prefix="KESTENBAUM", temperature=0.5, return_as_list=True)
     s = textgen.generate(n=1, prefix="SMITH", temperature=0.5, return_as_list=True)
     f.write(str(k[0]) + '\n')
