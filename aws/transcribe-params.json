@@ -1,0 +1,9 @@
+{
+    "TranscriptionJobName": "planet-money-The-Seattle-Experiment",
+    "LanguageCode": "en-US",
+    "MediaSampleRateHertz": 44100,
+    "MediaFormat": "mp3",
+    "Media": {
+        "MediaFileUri": "https://s3.amazonaws.com/planey-money-generator/episodes/Episode-873-The-Seattle-Experiment.mp3"
+    }
+}

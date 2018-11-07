@@ -106,3 +106,48 @@ Use the output URL example to convert text to voice MP3s
 ```bash
 https://`api-id`.execute-api.us-east-1.amazonaws.com/LATEST/convert?lang=`voice-id`&query=`text-to-convert`
 ```
+
+## Transcribe Episode
+
+We'll be transcribing one episode for our example, in order to do this we'll have to upload a copy of an episode to S3, then trigger a Transcribe Job.
+
+```bash
+# Download an Episode
+wget https://play.podtrac.com/npr-510289/npr.mc.tritondigital.com/NPR_510289/media/anon.npr-mp3/npr/pmoney/2018/10/20181031_pmoney_pmpod872.mp3 -O Episode-873-The-Seattle-Experiment.mp3
+
+# Copy to S3
+aws s3 cp Episode-873-The-Seattle-Experiment.mp3 s3://planey-money-generator/episodes/Episode-873-The-Seattle-Experiment.mp3
+
+# Delete the Episode
+rm Episode-873-The-Seattle-Experiment.mp3
+```
+
+Edit the transcribe parameter file in `aws/transcribe-params.json` and then trigger the job
+
+```bash
+aws transcribe start-transcription-job \
+--region us-east-1 \
+--cli-input-json file://aws/transcribe-params.json
+```
+
+Get the results of the transcription job once its completed by running the following (replace the job name with the one from your parameters)
+
+```bash
+aws transcribe get-transcription-job \
+--region us-east-1 \
+--transcription-job-name planet-money-The-Seattle-Experiment
+```
+
+Download the results of the transcription using the
+
+```json
+{
+    "TranscriptionJob": {
+        ...
+        "Transcript": {
+            "TranscriptFileUri": "<DOWNLOAD-URL-HERE>"
+        },
+        ...
+    }
+}
+```
