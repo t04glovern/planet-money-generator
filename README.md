@@ -138,7 +138,7 @@ aws transcribe get-transcription-job \
 --transcription-job-name planet-money-The-Seattle-Experiment
 ```
 
-Download the results of the transcription using the
+Download the results of the transcription using the `TranscriptFileUri` field in the response
 
 ```json
 {
