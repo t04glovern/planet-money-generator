@@ -161,8 +161,28 @@ Download the results of the transcription using the `TranscriptFileUri` field in
 }
 ```
 
+## Why?
+
+This is our own spin on the prolific generative text deep learning models that have been made to [write tweets](https://twitter.com/internetshit_nn), [write new episodes of F.R.I.E.N.D.S](https://twitter.com/_Pandy/status/689209034143084547) and even generate [song lyrics](https://medium.com/@ivanliljeqvist/using-ai-to-generate-lyrics-5aba7950903).
+
+We decided that podcasts are kind of popular right now, so we wanted to create our own. Rather than go to the effort of being interesting or learn to talk into a microphone for more than 5 minutes, we decided to use a computer to generate a podcast script and have AWS Polly read it out for us.
+
+## How?
+
+We used AWS Transcribe to injest audio from other podcasts with far more interesting hosts, outputting a text transcription. This text transcription was used as training data for a deep learning generative text model based on [textgenrnn](https://github.com/minimaxir/textgenrnn). This model was then used to generate a simple 20 line script, which was read by two announcers using AWS Polly.
+
+### Neural Network Architecture
+
+![Neural Network Architecture](img/nn.png)
+
+We limited ourselves to using a single episode as training data because we were designing this to be unintentionally funny with the errors that it made rather than trying to create something of real value.
+
+We used our favourite podcast, Planet Money as the training data, but this process could easily be applied to any other podcast.
+
 ## Execution on Local Hardware
 
-We weren't able to enable accelerated compute on our account to use `ml.p2.xlarge` via SageMaker, so we ran our training on our local systems GPUs
+Due to time constraints (We only started this two days before the deadline) we were unable to request GPU instances from AWS Support in time, so rather than using a 'ml.p2.xlarge' instance via SageMaker, we ran our model training process on a laptop GPU (Nvidia 970m).
 
-## TBC Stephen
+Using the Planet Money episode "[Norway Has Advice For Libya"](https://www.npr.org/sections/money/2011/08/26/139972557/the-friday-podcast-norways-got-advice-for-libya) as training data, this process took 182 seconds to complete 25 epochs, which is perfectly reasonable for a laptop GPU from 2014.
+
+![Model description and training data information](img/model.png)
