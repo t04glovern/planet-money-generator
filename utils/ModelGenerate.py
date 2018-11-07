@@ -1,5 +1,8 @@
 from textgenrnn import textgenrnn
 from json import loads
+from sys import argv
+
+file_path = argv[1]
 
 
 def convertTranscript(file_path):
@@ -19,10 +22,10 @@ def convertTranscript(file_path):
 
 
 
-file_path = '139972557.txt'
+
 if file_path.split(".")[-1]=='json':
     file_path = convertTranscript(file_path)
-    
+
 textgen = textgenrnn()
 textgen.reset()
 
@@ -39,3 +42,5 @@ for _ in range(0, 10):
     print(k)
     print(s)
 f.close()
+
+
