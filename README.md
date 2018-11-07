@@ -4,7 +4,9 @@ trained text-generating neural network that generates episodes of [Planet Money]
 
 ## Audio Example
 
-[Planet Money RNN - Example 01](https://soundcloud.com/gloverdude/planet-money-rnn-example-01)
+* [Planet Money RNN - Example 01](https://soundcloud.com/gloverdude/planet-money-rnn-example-01)
+* [Planet Money RNN - Example 02](https://soundcloud.com/gloverdude/planet-money-rnn-example-02)
+
 
 ## Learning Example (10 epoch spread)
 
