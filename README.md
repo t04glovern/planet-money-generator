@@ -96,9 +96,9 @@ Deploy the API
 
 ```bash
 aws cloudformation create-stack --stack-name "planet-money-polly-api" \
---template-body file://aws/polly-api-gateway.json \
---parameters file://aws/polly-api-gateway-params.json \
---capabilities CAPABILITY_IAM
+    --template-body file://aws/polly-api-gateway.json \
+    --parameters file://aws/polly-api-gateway-params.json \
+    --capabilities CAPABILITY_IAM
 ```
 
 Use the output URL example to convert text to voice MP3s
@@ -108,6 +108,8 @@ https://`api-id`.execute-api.us-east-1.amazonaws.com/LATEST/convert?lang=`voice-
 ```
 
 ## Transcribe Episode
+
+![Transcribe example](img/transcribe-example.png)
 
 We'll be transcribing one episode for our example, in order to do this we'll have to upload a copy of an episode to S3, then trigger a Transcribe Job.
 
@@ -126,16 +128,16 @@ Edit the transcribe parameter file in `aws/transcribe-params.json` and then trig
 
 ```bash
 aws transcribe start-transcription-job \
---region us-east-1 \
---cli-input-json file://aws/transcribe-params.json
+    --region us-east-1 \
+    --cli-input-json file://aws/transcribe-params.json
 ```
 
 Get the results of the transcription job once its completed by running the following (replace the job name with the one from your parameters)
 
 ```bash
 aws transcribe get-transcription-job \
---region us-east-1 \
---transcription-job-name planet-money-The-Seattle-Experiment
+    --region us-east-1 \
+    --transcription-job-name planet-money-The-Seattle-Experiment
 ```
 
 Download the results of the transcription using the `TranscriptFileUri` field in the response
