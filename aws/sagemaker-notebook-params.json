@@ -1,6 +1,6 @@
 [
     {
-        "ParameterValue": "ml.t2.medium",
+        "ParameterValue": "ml.m4.xlarge",
         "ParameterKey": "NotebookInstanceType"
     },
     {
@@ -16,7 +16,7 @@
         "ParameterKey": "NotebookInstanceName"
     },
     {
-        "ParameterValue": "planey-money-generator",
+        "ParameterValue": "planet-money-generator",
         "ParameterKey": "SageMakerS3Bucket"
     }
 ]

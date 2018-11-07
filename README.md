@@ -26,6 +26,15 @@ trained text-generating neural network that generates episodes of [Planet Money]
 
 ## CloudFormation
 
+### S3
+
+Sync the transcripts to the chosen S3 bucket. If you would like to Scrape these yourself, you can use the `scrape.ipynb` notebook in the coming steps.
+
+```bash
+aws s3 mb s3://planet-money-generator --region us-east-1
+aws s3 sync transcripts/ s3://planet-money-generator/transcripts
+```
+
 ### SageMaker
 
 Fill in the `sagemaker-notebook-params.json` file with your desired settings.
@@ -33,7 +42,7 @@ Fill in the `sagemaker-notebook-params.json` file with your desired settings.
 ```json
 [
     {
-        "ParameterValue": "ml.t2.medium",
+        "ParameterValue": "ml.m4.xlarge",
         "ParameterKey": "NotebookInstanceType"
     },
     {
@@ -49,26 +58,18 @@ Fill in the `sagemaker-notebook-params.json` file with your desired settings.
         "ParameterKey": "NotebookInstanceName"
     },
     {
-        "ParameterValue": "planey-money-generator",
+        "ParameterValue": "planet-money-generator",
         "ParameterKey": "SageMakerS3Bucket"
     }
 ]
 ```
 
 ```bash
-aws cloudformation --region us-east-1 create-stack --stack-name planet-money-sagemaker \
+aws cloudformation create-stack --stack-name planet-money-sagemaker \
     --template-body file://aws/sagemaker-notebook.json \
     --parameters file://aws/sagemaker-notebook-params.json \
     --capabilities "CAPABILITY_IAM" \
     --disable-rollback
-```
-
-### S3
-
-Sync the transcripts to the chosen S3 bucket. If you would like to Scrape these yourself, you can use the `scrape.ipynb` notebook in the coming steps.
-
-```bash
-aws s3 sync transcripts/ s3://planey-money-generator/transcripts
 ```
 
 ## SageMaker Notebook Setup
@@ -80,6 +81,7 @@ Upload the contents of `notebooks/` to your SageMaker root directory.
 * `scrape.ipynb` - scrape the episode transcripts
 * `basic-analysis.ipynb` - train your own text-generating neural network (uses [textgenrnn](https://github.com/minimaxir/textgenrnn))
 * `basic-analysis-conversation.ipynb` - train and output a conversation log between reporters
+* `planet-money-list.html` - html page for the planet money episodes that we'll use to rip their transcriptions from
 
 ## Polly Lambda
 
@@ -118,7 +120,7 @@ We'll be transcribing one episode for our example, in order to do this we'll hav
 wget https://play.podtrac.com/npr-510289/npr.mc.tritondigital.com/NPR_510289/media/anon.npr-mp3/npr/pmoney/2018/10/20181031_pmoney_pmpod872.mp3 -O Episode-873-The-Seattle-Experiment.mp3
 
 # Copy to S3
-aws s3 cp Episode-873-The-Seattle-Experiment.mp3 s3://planey-money-generator/episodes/Episode-873-The-Seattle-Experiment.mp3
+aws s3 cp Episode-873-The-Seattle-Experiment.mp3 s3://planet-money-generator/episodes/Episode-873-The-Seattle-Experiment.mp3
 
 # Delete the Episode
 rm Episode-873-The-Seattle-Experiment.mp3

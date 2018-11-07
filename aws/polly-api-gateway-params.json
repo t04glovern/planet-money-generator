@@ -1,7 +1,7 @@
 [
     {
         "ParameterKey": "PollyMp3Bucket",
-        "ParameterValue": "planey-money-generator"
+        "ParameterValue": "planet-money-generator"
     },
     {
         "ParameterKey": "LambdaCodeBucket",
