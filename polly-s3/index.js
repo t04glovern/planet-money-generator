@@ -22,15 +22,12 @@ function random128Hex() {
 }
 
 exports.handler = (event, context, callback) => {
-  let query = event.queryStringParameters.q;
+  let query = event.query;
   if (event.body) {
     query = JSON.parse(event.body).text || query;
   }
 
-  console.log(
-    "Starting text-to-speech for text",
-    event.queryStringParameters.q
-  );
+  console.log("Starting text-to-speech for text", event.query);
 
   let polly = new AWS.Polly();
   polly.synthesizeSpeech(
@@ -39,7 +36,7 @@ exports.handler = (event, context, callback) => {
       SampleRate: "22050",
       Text: query,
       TextType: "text",
-      VoiceId: event.queryStringParameters.lang
+      VoiceId: event.lang
     },
     function(err, data) {
       if (err) {
@@ -68,11 +65,11 @@ exports.handler = (event, context, callback) => {
           }
           return callback(null, {
             statusCode: 200,
-            body: JSON.stringify({
+            body: {
               url: `https://${bucket}.s3.amazonaws.com/${encodeURIComponent(
                 key
               )}`
-            })
+            }
           });
         }
       );

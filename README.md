@@ -88,6 +88,21 @@ To use the Polly text conversion tool, package and upload the lambda as a zip by
 ```bash
 cd polly-s3
 ./package-lambda.sh
+# Replace this line with your own bucket / path for the zip to sit
+aws s3 cp polly-s3.zip s3://waanimals-deployment-scripts/planet-money/polly-s3.zip
 ```
 
-TBC...
+Deploy the API
+
+```bash
+aws cloudformation create-stack --stack-name "planet-money-polly-api" \
+--template-body file://aws/polly-api-gateway.json \
+--parameters file://aws/polly-api-gateway-params.json \
+--capabilities CAPABILITY_IAM
+```
+
+Use the output URL example to convert text to voice MP3s
+
+```bash
+https://`api-id`.execute-api.us-east-1.amazonaws.com/LATEST/convert?lang=`voice-id`&query=`text-to-convert`
+```

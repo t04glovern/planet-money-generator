@@ -1,0 +1,371 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Lambda and API Gateway producing MP3s using AWS Polly",
+  "Parameters": {
+    "PollyMp3Bucket": {
+      "Description": "Polly MP3 Bucket Name to Save to",
+      "Type": "String"
+    },
+    "LambdaCodeBucket": {
+      "Description": "Lambda Code Bucket Name",
+      "Type": "String"
+    },
+    "LambdaCodeS3Key": {
+      "Description": "Lambda S3 Key",
+      "Type": "String"
+    }
+  },
+  "Conditions": {
+    "ApiGatewayDeployed": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            "",
+            {
+              "Ref": "LambdaCodeBucket"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "Resources": {
+    "LambdaRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": ["sts:AssumeRole"]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "logs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": ["logs:*"],
+                  "Resource": "arn:aws:logs:*:*:*"
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "polly-synth",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "polly:SynthesizeSpeech",
+                  "Resource": "*"
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "s3-write",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Action": ["s3:*"],
+                  "Effect": "Allow",
+                  "Resource": "arn:aws:s3:::*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "Lambda": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "LambdaCodeBucket"
+          },
+          "S3Key": {
+            "Ref": "LambdaCodeS3Key"
+          }
+        },
+        "Environment": {
+          "Variables": {
+            "POLLY_S3_BUCKET": {
+              "Ref": "PollyMp3Bucket"
+            }
+          }
+        },
+        "Description": "Rest Api Handler",
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": ["LambdaRole", "Arn"]
+        },
+        "Runtime": "nodejs8.10",
+        "Timeout": 15,
+        "FunctionName": {
+          "Fn::Sub": "${AWS::StackName}-polly-rest-api"
+        }
+      }
+    },
+    "RestApi": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-polly-rest-api"
+        },
+        "Description": "API used for converting text to an mp3 using Polly",
+        "EndpointConfiguration": {
+          "Types": ["REGIONAL"]
+        },
+        "FailOnWarnings": true,
+        "Policy": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": "execute-api:Invoke",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":*"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "LambdaPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:invokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": ["Lambda", "Arn"]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "RestApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "ApiGatewayCloudWatchLogsRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": ["apigateway.amazonaws.com"]
+              },
+              "Action": ["sts:AssumeRole"]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "ApiGatewayLogsPolicy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:DescribeLogGroups",
+                    "logs:DescribeLogStreams",
+                    "logs:PutLogEvents",
+                    "logs:GetLogEvents",
+                    "logs:FilterLogEvents"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "ApiGatewayAccount": {
+      "Type": "AWS::ApiGateway::Account",
+      "Properties": {
+        "CloudWatchRoleArn": {
+          "Fn::GetAtt": ["ApiGatewayCloudWatchLogsRole", "Arn"]
+        }
+      }
+    },
+    "RestApiStage": {
+      "DependsOn": ["ApiGatewayAccount"],
+      "Type": "AWS::ApiGateway::Stage",
+      "Properties": {
+        "DeploymentId": {
+          "Ref": "ApiDeployment"
+        },
+        "MethodSettings": [
+          {
+            "DataTraceEnabled": true,
+            "HttpMethod": "*",
+            "LoggingLevel": "INFO",
+            "ResourcePath": "/*"
+          }
+        ],
+        "RestApiId": {
+          "Ref": "RestApi"
+        },
+        "StageName": "LATEST"
+      }
+    },
+    "ApiDeployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "DependsOn": ["RestRequest"],
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApi"
+        },
+        "StageName": "DummyStage"
+      }
+    },
+    "RestResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApi"
+        },
+        "ParentId": {
+          "Fn::GetAtt": ["RestApi", "RootResourceId"]
+        },
+        "PathPart": "convert"
+      }
+    },
+    "RestRequest": {
+      "DependsOn": "LambdaPermission",
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "GET",
+        "Integration": {
+          "Type": "AWS",
+          "IntegrationHttpMethod": "POST",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:aws:apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": ["Lambda", "Arn"]
+                },
+                "/invocations"
+              ]
+            ]
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": 200
+            }
+          ],
+          "RequestTemplates": {
+            "application/json": {
+              "Fn::Join": [
+                "",
+                [
+                  "{",
+                  "\"lang\": \"$input.params().querystring.get('lang')\",",
+                  "\"query\": \"$input.params().querystring.get('query')\"",
+                  "}"
+                ]
+              ]
+            }
+          }
+        },
+        "RequestParameters": {
+          "method.request.querystring.lang": true,
+          "method.request.querystring.query": true
+        },
+        "ResourceId": {
+          "Ref": "RestResource"
+        },
+        "RestApiId": {
+          "Ref": "RestApi"
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": 200
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "LambdaArn": {
+      "Value": {
+        "Fn::GetAtt": ["Lambda", "Arn"]
+      }
+    },
+    "RequestUrlExample": {
+      "Description": "Request URL of the API gateway",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "RestApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".amazonaws.com/LATEST/convert?lang=Matthew&query=Testing"
+          ]
+        ]
+      }
+    }
+  }
+}

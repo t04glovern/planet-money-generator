@@ -1,0 +1,14 @@
+[
+    {
+        "ParameterKey": "PollyMp3Bucket",
+        "ParameterValue": "planey-money-generator"
+    },
+    {
+        "ParameterKey": "LambdaCodeBucket",
+        "ParameterValue": "waanimals-deployment-scripts"
+    },
+    {
+        "ParameterKey": "LambdaCodeS3Key",
+        "ParameterValue": "planet-money/polly-s3.zip"
+    }
+]
